@@ -1,0 +1,185 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.8 Chrome/140.0.7339.240 Electron/38.4.0 Safari/537.36" version="28.2.8">
+  <diagram name="2. Arquitectura del sistema" id="arquitectura">
+    <mxGraphModel dx="1665" dy="875" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1620" pageHeight="1020" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="b_interfaz" value="CAPA DE INTERFAZ" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eef3fb;strokeColor=#6c8ebf;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=14;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="20" y="20" width="1560" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="b_app" value="CAPA DE APLICACION (Backend)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f3ecf7;strokeColor=#9673a6;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=14;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="20" y="170" width="1560" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="b_comm" value="CAPA DE COMUNICACION" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fdf3e3;strokeColor=#d6b656;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=14;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="20" y="350" width="1560" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="b_hw" value="CAPA DE HARDWARE / IoT (por habitacion)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eaf7ea;strokeColor=#82b366;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=14;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="20" y="480" width="1560" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="b_fis" value="CAPA FISICA — CASA INTELIGENTE (maqueta)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fdeeee;strokeColor=#b85450;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=14;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="20" y="670" width="1560" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="app_movil" value="Aplicacion de escritorio" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;arcSize=8;" parent="1" vertex="1">
+          <mxGeometry x="30" y="50" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="usuario_ico" value="Usuario" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;fontStyle=1;arcSize=8;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="370" y="40" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="oxG2XdpaRPXcyXRrL3k6-10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="logica" target="automatiz">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="oxG2XdpaRPXcyXRrL3k6-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="logica" target="bt">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="320" y="405" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="logica" value="Logica de negocio (gestion dispositivos)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;arcSize=8;" parent="1" vertex="1">
+          <mxGeometry x="260" y="210" width="220" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="automatiz" value="Motor de Automatizaciones (Reglas)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;arcSize=8;" parent="1" vertex="1">
+          <mxGeometry x="500" y="210" width="220" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="notif_srv" value="Servicio de Notificaciones" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;arcSize=8;" parent="1" vertex="1">
+          <mxGeometry x="740" y="210" width="200" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="bd" value="Base de datos (usuarios, eventos, reglas)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;fontStyle=1;arcSize=8;shape=cylinder3;boundedLbl=1;" parent="1" vertex="1">
+          <mxGeometry x="30" y="275" width="260" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="mqtt" value="MQTT (ESP32 &lt;-&gt; backend)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdf3e3;strokeColor=#d6b656;fontSize=12;fontStyle=1;arcSize=8;" parent="1" vertex="1">
+          <mxGeometry x="330" y="380" width="200" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="bt" value="WI-FI/Bluetooth (config. local, opcional)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdf3e3;strokeColor=#d6b656;fontSize=12;fontStyle=1;arcSize=8;" parent="1" vertex="1">
+          <mxGeometry x="60" y="380" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="esp1" value="ESP32&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;arcSize=8;" parent="1" vertex="1">
+          <mxGeometry x="160" y="520" width="170" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="gpio" value="GPIO / PWM / ADC (lectura y control)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;arcSize=8;dashed=1;" parent="1" vertex="1">
+          <mxGeometry x="500" y="520" width="260" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="room_sala" value="Sala" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#b85450;fontSize=14;fontStyle=1;verticalAlign=top;align=left;spacingLeft=14;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="60" y="710" width="410" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="s_mov" value="Sensor de movimiento (PIR)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;fontStyle=1;arcSize=8;" parent="1" vertex="1">
+          <mxGeometry x="75" y="740" width="140" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="s_luz" value="Sensor de luz (LDR)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=12;fontStyle=1;arcSize=8;" parent="1" vertex="1">
+          <mxGeometry x="280" y="740" width="130" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="a_led1" value="LED / bombillo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;arcSize=8;" parent="1" vertex="1">
+          <mxGeometry x="75" y="880" width="140" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="a_cortina" value="Cortina (servomotor)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;fontStyle=1;arcSize=8;" parent="1" vertex="1">
+          <mxGeometry x="280" y="875" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="oxG2XdpaRPXcyXRrL3k6-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="house_icon" target="room_sala">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="house_icon" value="CASA INTELIGENTE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=16;fontStyle=1;arcSize=8;fontStyle=1;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="670" y="710" width="280" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="ar1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;endArrow=block;endFill=1;strokeWidth=1.6;strokeColor=#555555;" parent="1" source="app_movil" target="logica" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="150" y="210" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="140" y="140" />
+              <mxPoint x="370" y="140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ar3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;endArrow=block;endFill=1;strokeWidth=1.6;strokeColor=#555555;" parent="1" source="usuario_ico" target="app_movil" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="310" y="90" />
+              <mxPoint x="310" y="85" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ar5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;endArrow=block;endFill=1;strokeWidth=1.6;strokeColor=#555555;" parent="1" source="logica" target="automatiz" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ar6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;endArrow=block;endFill=1;strokeWidth=1.6;strokeColor=#555555;" parent="1" source="automatiz" target="notif_srv" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ar7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;endArrow=block;endFill=1;strokeWidth=1.6;strokeColor=#555555;" parent="1" source="logica" target="bd" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ar8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;endArrow=block;endFill=1;strokeWidth=1.6;strokeColor=#555555;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="automatiz" target="bd" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="610" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ar11" value="eventos" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;endArrow=block;endFill=1;strokeWidth=1.6;strokeColor=#555555;" parent="1" source="mqtt" target="automatiz" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ar12" value="publica/suscribe" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;endArrow=block;endFill=1;strokeWidth=1.6;strokeColor=#555555;" parent="1" source="esp1" target="mqtt" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ar13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;endArrow=block;endFill=1;strokeWidth=1.6;strokeColor=#555555;" parent="1" target="mqtt" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="430" y="575" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ar16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;endArrow=block;endFill=1;strokeWidth=1.6;strokeColor=#555555;" parent="1" source="s_mov" target="esp1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="145" y="720" />
+              <mxPoint x="245" y="720" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ar17" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;endArrow=block;endFill=1;strokeWidth=1.6;strokeColor=#555555;" parent="1" source="s_luz" target="esp1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="345" y="720" />
+              <mxPoint x="245" y="720" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ar18" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;endArrow=block;endFill=1;strokeWidth=1.6;strokeColor=#555555;startArrow=block;startFill=1;" parent="1" source="a_led1" target="esp1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="145" y="820" />
+              <mxPoint x="245" y="820" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ar20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;endArrow=block;endFill=1;strokeWidth=1.6;strokeColor=#555555;startArrow=block;startFill=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" parent="1" source="a_cortina" target="esp1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="315" y="820" />
+              <mxPoint x="145" y="820" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ar27" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;endArrow=block;endFill=1;strokeWidth=1.6;strokeColor=#555555;endArrow=none;dashed=1;" parent="1" source="esp1" target="gpio" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ar28" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;fontSize=10;endArrow=block;endFill=1;strokeWidth=1.6;strokeColor=#555555;endArrow=none;dashed=1;" parent="1" target="gpio" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="430" y="575" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxG2XdpaRPXcyXRrL3k6-4" value="Text" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="ar28">
+          <mxGeometry x="-0.7407" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxG2XdpaRPXcyXRrL3k6-5" value="Text" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="ar28">
+          <mxGeometry x="-0.6444" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxG2XdpaRPXcyXRrL3k6-9" value="pines" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="ar28">
+          <mxGeometry x="-0.5429" y="2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

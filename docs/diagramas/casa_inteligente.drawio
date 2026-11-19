@@ -1,0 +1,384 @@
+<mxfile host="app.diagrams.net" agent="Claude">
+  <diagram name="Diagrama de Clases - Casa Inteligente" id="domotica">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="1700" pageHeight="1350" math="0" shadow="0" adaptiveColors="auto">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="usuario" parent="1" style="swimlane;fontStyle=1;fontSize=14;align=center;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Usuario" vertex="1">
+          <mxGeometry height="190" width="280" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="usuario_a0" parent="usuario" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- id: int" vertex="1">
+          <mxGeometry height="26" width="280" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="usuario_a1" parent="usuario" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- nombre: String" vertex="1">
+          <mxGeometry height="26" width="280" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="usuario_a2" parent="usuario" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- correo: String" vertex="1">
+          <mxGeometry height="26" width="280" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="usuario_sep" parent="usuario" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;html=1;" value="" vertex="1">
+          <mxGeometry height="8" width="280" y="104" as="geometry" />
+        </mxCell>
+        <mxCell id="usuario_m0" parent="usuario" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ iniciarSesion()" vertex="1">
+          <mxGeometry height="26" width="280" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="usuario_m1" parent="usuario" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ cerrarSesion()" vertex="1">
+          <mxGeometry height="26" width="280" y="138" as="geometry" />
+        </mxCell>
+        <mxCell id="usuario_m2" parent="usuario" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ controlarDispositivo(d: Dispositivo)" vertex="1">
+          <mxGeometry height="26" width="280" y="164" as="geometry" />
+        </mxCell>
+
+        <mxCell id="casa" parent="1" style="swimlane;fontStyle=1;fontSize=14;align=center;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Casa" vertex="1">
+          <mxGeometry height="164" width="280" x="440" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="casa_a0" parent="casa" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- direccion: String" vertex="1">
+          <mxGeometry height="26" width="280" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="casa_a1" parent="casa" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- estadoSistema: Estado" vertex="1">
+          <mxGeometry height="26" width="280" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="casa_sep" parent="casa" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;html=1;" value="" vertex="1">
+          <mxGeometry height="8" width="280" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="casa_m0" parent="casa" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ encenderSistema()" vertex="1">
+          <mxGeometry height="26" width="280" y="86" as="geometry" />
+        </mxCell>
+        <mxCell id="casa_m1" parent="casa" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ apagarSistema()" vertex="1">
+          <mxGeometry height="26" width="280" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="casa_m2" parent="casa" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ consultarEstado(): Estado" vertex="1">
+          <mxGeometry height="26" width="280" y="138" as="geometry" />
+        </mxCell>
+
+        <mxCell id="nota" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;size=20;align=left;spacingLeft=10;verticalAlign=top;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;Equipo&lt;/b&gt;&lt;br&gt;&lt;br&gt;Garzón 5046&lt;br&gt;Torres 5031&lt;br&gt;Roncancio 5027&lt;br&gt;Cobo 4742" vertex="1">
+          <mxGeometry height="200" width="310" x="1060" y="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="habitacion" parent="1" style="swimlane;fontStyle=1;fontSize=14;align=center;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Habitacion" vertex="1">
+          <mxGeometry height="216" width="280" x="240" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="habitacion_a0" parent="habitacion" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- nombre: String" vertex="1">
+          <mxGeometry height="26" width="280" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="habitacion_a1" parent="habitacion" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- numero: int" vertex="1">
+          <mxGeometry height="26" width="280" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="habitacion_sep" parent="habitacion" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;html=1;" value="" vertex="1">
+          <mxGeometry height="8" width="280" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="habitacion_m0" parent="habitacion" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ agregarDispositivo(d: Dispositivo)" vertex="1">
+          <mxGeometry height="26" width="280" y="86" as="geometry" />
+        </mxCell>
+        <mxCell id="habitacion_m1" parent="habitacion" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ encenderLuces()" vertex="1">
+          <mxGeometry height="26" width="280" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="habitacion_m2" parent="habitacion" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ apagarLuces()" vertex="1">
+          <mxGeometry height="26" width="280" y="138" as="geometry" />
+        </mxCell>
+        <mxCell id="habitacion_m3" parent="habitacion" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ abrirCortinas()" vertex="1">
+          <mxGeometry height="26" width="280" y="164" as="geometry" />
+        </mxCell>
+        <mxCell id="habitacion_m4" parent="habitacion" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ cerrarCortinas()" vertex="1">
+          <mxGeometry height="26" width="280" y="190" as="geometry" />
+        </mxCell>
+
+        <mxCell id="micro" parent="1" style="swimlane;fontStyle=1;fontSize=14;align=center;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Microcontrolador" vertex="1">
+          <mxGeometry height="216" width="280" x="640" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="micro_a0" parent="micro" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- modelo: String" vertex="1">
+          <mxGeometry height="26" width="280" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="micro_a1" parent="micro" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- puerto: String" vertex="1">
+          <mxGeometry height="26" width="280" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="micro_a2" parent="micro" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- estado: Estado" vertex="1">
+          <mxGeometry height="26" width="280" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="micro_sep" parent="micro" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;html=1;" value="" vertex="1">
+          <mxGeometry height="8" width="280" y="104" as="geometry" />
+        </mxCell>
+        <mxCell id="micro_m0" parent="micro" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ iniciar()" vertex="1">
+          <mxGeometry height="26" width="280" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="micro_m1" parent="micro" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ leerSensor(s: Sensor): float" vertex="1">
+          <mxGeometry height="26" width="280" y="138" as="geometry" />
+        </mxCell>
+        <mxCell id="micro_m2" parent="micro" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ enviarComando(d: Dispositivo)" vertex="1">
+          <mxGeometry height="26" width="280" y="164" as="geometry" />
+        </mxCell>
+        <mxCell id="micro_m3" parent="micro" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ procesarDatos()" vertex="1">
+          <mxGeometry height="26" width="280" y="190" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dispositivo" parent="1" style="swimlane;fontStyle=3;fontSize=14;align=center;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="Dispositivo" vertex="1">
+          <mxGeometry height="190" width="280" x="440" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="dispositivo_a0" parent="dispositivo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- id: int" vertex="1">
+          <mxGeometry height="26" width="280" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="dispositivo_a1" parent="dispositivo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- estado: Estado" vertex="1">
+          <mxGeometry height="26" width="280" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="dispositivo_a2" parent="dispositivo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- ubicacion: String" vertex="1">
+          <mxGeometry height="26" width="280" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="dispositivo_sep" parent="dispositivo" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;html=1;" value="" vertex="1">
+          <mxGeometry height="8" width="280" y="104" as="geometry" />
+        </mxCell>
+        <mxCell id="dispositivo_m0" parent="dispositivo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ encender()" vertex="1">
+          <mxGeometry height="26" width="280" y="112" as="geometry" />
+        </mxCell>
+        <mxCell id="dispositivo_m1" parent="dispositivo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ apagar()" vertex="1">
+          <mxGeometry height="26" width="280" y="138" as="geometry" />
+        </mxCell>
+        <mxCell id="dispositivo_m2" parent="dispositivo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ consultarEstado(): Estado" vertex="1">
+          <mxGeometry height="26" width="280" y="164" as="geometry" />
+        </mxCell>
+
+        <mxCell id="estado_enum" parent="1" style="swimlane;fontStyle=1;fontSize=13;align=center;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&amp;laquo;enumeration&amp;raquo;&lt;br&gt;Estado" vertex="1">
+          <mxGeometry height="118" width="200" x="840" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="estado_l0" parent="estado_enum" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="ENCENDIDO" vertex="1">
+          <mxGeometry height="26" width="200" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="estado_l1" parent="estado_enum" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="APAGADO" vertex="1">
+          <mxGeometry height="26" width="200" y="66" as="geometry" />
+        </mxCell>
+        <mxCell id="estado_l2" parent="estado_enum" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="ERROR" vertex="1">
+          <mxGeometry height="26" width="200" y="92" as="geometry" />
+        </mxCell>
+
+        <mxCell id="led" parent="1" style="swimlane;fontStyle=1;fontSize=14;align=center;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="LED" vertex="1">
+          <mxGeometry height="112" width="280" x="40" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="led_a0" parent="led" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- color: String" vertex="1">
+          <mxGeometry height="26" width="280" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="led_a1" parent="led" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- intensidad: int" vertex="1">
+          <mxGeometry height="26" width="280" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="led_sep" parent="led" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;html=1;" value="" vertex="1">
+          <mxGeometry height="8" width="280" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="led_m0" parent="led" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ cambiarIntensidad(valor: int)" vertex="1">
+          <mxGeometry height="26" width="280" y="86" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cortina" parent="1" style="swimlane;fontStyle=1;fontSize=14;align=center;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Cortina" vertex="1">
+          <mxGeometry height="138" width="280" x="380" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="cortina_a0" parent="cortina" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- porcentajeApertura: int" vertex="1">
+          <mxGeometry height="26" width="280" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="cortina_sep" parent="cortina" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;html=1;" value="" vertex="1">
+          <mxGeometry height="8" width="280" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="cortina_m0" parent="cortina" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ abrir()" vertex="1">
+          <mxGeometry height="26" width="280" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cortina_m1" parent="cortina" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ cerrar()" vertex="1">
+          <mxGeometry height="26" width="280" y="86" as="geometry" />
+        </mxCell>
+        <mxCell id="cortina_m2" parent="cortina" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ ajustarApertura(porcentaje: int)" vertex="1">
+          <mxGeometry height="26" width="280" y="112" as="geometry" />
+        </mxCell>
+
+        <mxCell id="servo" parent="1" style="swimlane;fontStyle=1;fontSize=14;align=center;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Servomotor" vertex="1">
+          <mxGeometry height="86" width="280" x="720" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="servo_a0" parent="servo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- angulo: int" vertex="1">
+          <mxGeometry height="26" width="280" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="servo_sep" parent="servo" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;html=1;" value="" vertex="1">
+          <mxGeometry height="8" width="280" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="servo_m0" parent="servo" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ mover(angulo: int)" vertex="1">
+          <mxGeometry height="26" width="280" y="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sensor" parent="1" style="swimlane;fontStyle=3;fontSize=14;align=center;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="Sensor" vertex="1">
+          <mxGeometry height="86" width="280" x="1060" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="sensor_a0" parent="sensor" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- tipo: TipoSensor" vertex="1">
+          <mxGeometry height="26" width="280" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="sensor_sep" parent="sensor" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;html=1;" value="" vertex="1">
+          <mxGeometry height="8" width="280" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="sensor_m0" parent="sensor" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;fontStyle=2;html=1;" value="+ leerDatos(): float" vertex="1">
+          <mxGeometry height="26" width="280" y="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tiposensor_enum" parent="1" style="swimlane;fontStyle=1;fontSize=13;align=center;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&amp;laquo;enumeration&amp;raquo;&lt;br&gt;TipoSensor" vertex="1">
+          <mxGeometry height="118" width="200" x="1400" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="tiposensor_l0" parent="tiposensor_enum" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="LUZ" vertex="1">
+          <mxGeometry height="26" width="200" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="tiposensor_l1" parent="tiposensor_enum" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="MOVIMIENTO" vertex="1">
+          <mxGeometry height="26" width="200" y="66" as="geometry" />
+        </mxCell>
+        <mxCell id="tiposensor_l2" parent="tiposensor_enum" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="TEMPERATURA" vertex="1">
+          <mxGeometry height="26" width="200" y="92" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sensorluz" parent="1" style="swimlane;fontStyle=1;fontSize=14;align=center;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="SensorLuz" vertex="1">
+          <mxGeometry height="138" width="280" x="1000" y="1120" as="geometry" />
+        </mxCell>
+        <mxCell id="sensorluz_a0" parent="sensorluz" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- nivelLuz: float" vertex="1">
+          <mxGeometry height="26" width="280" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="sensorluz_a1" parent="sensorluz" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- unidad: String" vertex="1">
+          <mxGeometry height="26" width="280" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="sensorluz_sep" parent="sensorluz" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;html=1;" value="" vertex="1">
+          <mxGeometry height="8" width="280" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="sensorluz_m0" parent="sensorluz" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ leerDatos(): float" vertex="1">
+          <mxGeometry height="26" width="280" y="86" as="geometry" />
+        </mxCell>
+        <mxCell id="sensorluz_m1" parent="sensorluz" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ hayPocaLuz(): boolean" vertex="1">
+          <mxGeometry height="26" width="280" y="112" as="geometry" />
+        </mxCell>
+
+        <mxCell id="sensormov" parent="1" style="swimlane;fontStyle=1;fontSize=14;align=center;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=0;resizeParentMax=0;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="SensorMovimiento" vertex="1">
+          <mxGeometry height="138" width="280" x="1340" y="1120" as="geometry" />
+        </mxCell>
+        <mxCell id="sensormov_a0" parent="sensormov" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- movimientoDetectado: boolean" vertex="1">
+          <mxGeometry height="26" width="280" y="26" as="geometry" />
+        </mxCell>
+        <mxCell id="sensormov_a1" parent="sensormov" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="- sensibilidad: int" vertex="1">
+          <mxGeometry height="26" width="280" y="52" as="geometry" />
+        </mxCell>
+        <mxCell id="sensormov_sep" parent="sensormov" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;html=1;" value="" vertex="1">
+          <mxGeometry height="8" width="280" y="78" as="geometry" />
+        </mxCell>
+        <mxCell id="sensormov_m0" parent="sensormov" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ leerDatos(): float" vertex="1">
+          <mxGeometry height="26" width="280" y="86" as="geometry" />
+        </mxCell>
+        <mxCell id="sensormov_m1" parent="sensormov" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=6;fontSize=12;html=1;" value="+ hayMovimiento(): boolean" vertex="1">
+          <mxGeometry height="26" width="280" y="112" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rel_usuario_casa" style="html=1;startArrow=none;endArrow=none;rounded=0;fontSize=11;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" value="controla" edge="1" parent="1" source="usuario" target="casa">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_usuario_casa_m1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" value="1..*" vertex="1" connectable="0" parent="rel_usuario_casa">
+          <mxGeometry x="-0.7" relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_usuario_casa_m2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" value="1" vertex="1" connectable="0" parent="rel_usuario_casa">
+          <mxGeometry x="0.7" relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="rel_casa_hab" style="html=1;startArrow=diamond;startFill=1;endArrow=none;rounded=0;fontSize=11;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="contiene" edge="1" parent="1" source="casa" target="habitacion">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_casa_hab_m1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" value="1" vertex="1" connectable="0" parent="rel_casa_hab">
+          <mxGeometry x="-0.6" relative="1" as="geometry">
+            <mxPoint x="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_casa_hab_m2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" value="1..*" vertex="1" connectable="0" parent="rel_casa_hab">
+          <mxGeometry x="0.6" relative="1" as="geometry">
+            <mxPoint x="-16" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="rel_casa_micro" style="html=1;startArrow=diamond;startFill=0;endArrow=none;rounded=0;fontSize=11;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" value="posee" edge="1" parent="1" source="casa" target="micro">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_casa_micro_m1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" value="1" vertex="1" connectable="0" parent="rel_casa_micro">
+          <mxGeometry x="-0.6" relative="1" as="geometry">
+            <mxPoint x="12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_casa_micro_m2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" value="1" vertex="1" connectable="0" parent="rel_casa_micro">
+          <mxGeometry x="0.6" relative="1" as="geometry">
+            <mxPoint x="16" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="rel_hab_disp" style="html=1;startArrow=diamond;startFill=0;endArrow=none;rounded=0;fontSize=11;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" value="contiene" edge="1" parent="1" source="habitacion" target="dispositivo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_hab_disp_m1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" value="1" vertex="1" connectable="0" parent="rel_hab_disp">
+          <mxGeometry x="-0.6" relative="1" as="geometry">
+            <mxPoint x="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_hab_disp_m2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" value="0..*" vertex="1" connectable="0" parent="rel_hab_disp">
+          <mxGeometry x="0.6" relative="1" as="geometry">
+            <mxPoint x="-16" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="rel_micro_disp" style="html=1;startArrow=none;endArrow=none;rounded=0;fontSize=11;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" value="gestiona" edge="1" parent="1" source="micro" target="dispositivo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_micro_disp_m1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" value="1" vertex="1" connectable="0" parent="rel_micro_disp">
+          <mxGeometry x="-0.6" relative="1" as="geometry">
+            <mxPoint x="16" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_micro_disp_m2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" value="0..*" vertex="1" connectable="0" parent="rel_micro_disp">
+          <mxGeometry x="0.6" relative="1" as="geometry">
+            <mxPoint x="18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="gen_led" style="html=1;startArrow=none;endArrow=block;endFill=0;endSize=12;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.1;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="led" target="dispositivo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="gen_cortina" style="html=1;startArrow=none;endArrow=block;endFill=0;endSize=12;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.37;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="cortina" target="dispositivo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="gen_servo" style="html=1;startArrow=none;endArrow=block;endFill=0;endSize=12;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.63;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="servo" target="dispositivo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="gen_sensor" style="html=1;startArrow=none;endArrow=block;endFill=0;endSize=12;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.9;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="sensor" target="dispositivo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="rel_cortina_servo" style="html=1;startArrow=none;endArrow=none;rounded=0;fontSize=11;exitX=1;exitY=0.3;exitDx=0;exitDy=0;entryX=0;entryY=0.48;entryDx=0;entryDy=0;" value="acciona" edge="1" parent="1" source="cortina" target="servo">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="rel_cortina_servo_m1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" value="1" vertex="1" connectable="0" parent="rel_cortina_servo">
+          <mxGeometry x="-0.7" relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rel_cortina_servo_m2" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;fontColor=#666666;" value="1" vertex="1" connectable="0" parent="rel_cortina_servo">
+          <mxGeometry x="0.7" relative="1" as="geometry">
+            <mxPoint y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="gen_sensorluz" style="html=1;startArrow=none;endArrow=block;endFill=0;endSize=12;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.35;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="sensorluz" target="sensor">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="gen_sensormov" style="html=1;startArrow=none;endArrow=block;endFill=0;endSize=12;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.7;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="sensormov" target="sensor">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <mxCell id="dep_usuario_disp" style="html=1;dashed=1;dashPattern=8 8;startArrow=none;endArrow=open;endFill=0;endSize=10;rounded=0;fontSize=11;exitX=0.35;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.68;entryDx=0;entryDy=0;" value="usa" edge="1" parent="1" source="usuario" target="dispositivo">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="138" y="750" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
