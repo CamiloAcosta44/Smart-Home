@@ -40,7 +40,7 @@ CREATE TABLE dispositivos (
   nombre TEXT NOT NULL,
   tipo TEXT NOT NULL CHECK (tipo IN ('sensor_movimiento', 'sensor_luz', 'led', 'cortina',
                                      'sensor_temperatura', 'sensor_puerta', 'enchufe', 'camara', 'alarma')),
-  canal TEXT CHECK (canal IN ('mov', 'luz', 'led', 'cortina')),
+  canal TEXT CHECK (canal IN ('mov', 'luz', 'led', 'led2', 'cortina')),
   estado TEXT
 );
 

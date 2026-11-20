@@ -1,5 +1,10 @@
 """«interface» Repositorio<T> y su implementación RepositorioPostgres<T>.
 
+GRASP Fabricación Pura: no es un concepto de la casa; existe para guardar y leer filas.
+GRASP Indirección / Variaciones protegidas: los controladores usan listar/buscar/guardar/eliminar
+y no saben que hay PostgreSQL detrás; cambiar de base solo cambia esta clase.
+(No hay una clase «interface» aparte: con una sola implementación sería código sin uso.)
+
 Cada fila es un dict; los nombres de tabla/columna vienen del código, nunca del usuario.
 """
 from psycopg import sql

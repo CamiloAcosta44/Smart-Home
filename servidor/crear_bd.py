@@ -44,12 +44,14 @@ with psycopg.connect(os.environ.get("CASA_DB", "dbname=casa_inteligente"), autoc
     (sala,) = c.execute("INSERT INTO habitaciones (id_casa, nombre) VALUES (%s, 'Sala') RETURNING id", [casa]).fetchone()
     ids = {}
     for nombre, tipo, canal in [("Sensor de movimiento", "sensor_movimiento", "mov"), ("Sensor de luz", "sensor_luz", "luz"),
-                                ("Luz (LED)", "led", "led"), ("Cortina", "cortina", "cortina")]:
+                                ("Luz (LED)", "led", "led"), ("Luz 2 (LED)", "led", "led2"), ("Cortina", "cortina", "cortina")]:
         (ids[canal],) = c.execute("INSERT INTO dispositivos (id_habitacion, nombre, tipo, canal) VALUES (%s, %s, %s, %s) RETURNING id",
                                   [sala, nombre, tipo, canal]).fetchone()
     for nombre, sensor, op, valor, act, cmd, msg in [
         ("Movimiento enciende luces", "mov", "==", 1, "led", "encender", None),
         ("Sin movimiento apaga luces", "mov", "==", 0, "led", "apagar", None),
+        ("Movimiento enciende luz 2", "mov", "==", 1, "led2", "encender", None),
+        ("Sin movimiento apaga luz 2", "mov", "==", 0, "led2", "apagar", None),
         ("Mucha luz cierra cortina", "luz", ">=", 800, "cortina", "cerrar", None),
         ("Poca luz abre cortina", "luz", "<=", 200, "cortina", "abrir", None),
         ("Avisar movimiento", "mov", "==", 1, None, "notificar", "Movimiento detectado en la sala"),
