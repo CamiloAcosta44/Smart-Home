@@ -11,8 +11,9 @@ El servidor no tiene interfaz: solo conecta los Arduinos, la base de datos y las
 | Archivo | Clase(s) del UML |
 |---|---|
 | `schema.sql` | Tablas: usuarios, sesiones, casas, habitaciones, dispositivos, reglas, horarios, eventos, notificaciones, solicitudes |
+| `dominio.py` | `Dispositivo` (`Sensor`, `Actuador`, `SensorLuz`, `SensorMovimiento`, `LED`, `Cortina`, `Servomotor`), `Regla`, `Condicion` (`CondicionUmbral`, `CondicionMovimiento`), `Accion` (`AccionActuador`, `AccionNotificar`). Autoprueba: `python dominio.py` |
 | `repositorio.py` | `Repositorio<T>` / `RepositorioPostgres<T>` |
-| `app.py` | `Regla` (`CondicionUmbral`, `CondicionMovimiento`, `AccionActuador`, `AccionNotificar`), `ControladorAutomatizacion`, `ControladorHogar`, `ControladorAdministracion`, `ControladorSolicitudes`, `ServicioAutenticacion`, `ServicioNotificaciones` |
+| `app.py` | `ControladorAutomatizacion`, `ControladorHogar`, `ControladorAdministracion`, `ControladorSolicitudes`, `ServicioAutenticacion`, `ServicioNotificaciones` |
 | `crear_bd.py` | Crea las tablas, la casa de prueba (protoboard) con sus reglas y el admin. **Borra los datos** |
 | `prueba.py` | Prueba de punta a punta de toda la API |
 

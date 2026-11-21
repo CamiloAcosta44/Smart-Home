@@ -1,12 +1,18 @@
-"""Servidor de la Casa Inteligente (capa de aplicación), según UmlFinal.drawio.
+"""Servidor de la Casa Inteligente (capa de aplicación), según UmlFinal_v3.drawio (dominio en dominio.py).
 
-Solo es API: no tiene interfaz. La app del usuario (../app) se conecta desde cualquier dispositivo.
+Es la API; además sirve la app del usuario (../app) para que todo salga de un solo dominio.
 
   puente.py (PC con el Arduino de cada casa) ──WebSocket /ws──┐
   app del usuario (navegador)                ──WebSocket /ws──┤── ControladorAutomatizacion / ControladorHogar
                                              ──REST /api/*────┘   ControladorSolicitudes / ControladorAdministracion
                                                                    └── RepositorioPostgres ── PostgreSQL
 Correr:  .venv/bin/uvicorn app:app --host 0.0.0.0 --port 8765
+
+Patrones (ver también la leyenda del diagrama):
+  GRASP Controlador ........ los 4 controladores reciben todo lo que llega de la UI y del puente.
+  GRASP Fabricación Pura ... ServicioAutenticacion, ServicioNotificaciones y RepositorioPostgres no son del dominio:
+                             existen para que el dominio no cargue con BD, contraseñas ni envíos.
+  GRASP Polimorfismo / SOLID O, L .. en dominio.py (Regla, Condicion, Accion, Dispositivo).
 """
 import asyncio
 import hashlib
@@ -15,16 +21,19 @@ import secrets
 import time
 from contextlib import asynccontextmanager
 from datetime import datetime
+from pathlib import Path
 from typing import Literal
 
 import bcrypt
 import psycopg
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
+from dominio import Actuador, Regla, Sensor, crearDispositivo
 from repositorio import RepositorioPostgres
 
 DSN = os.environ.get("CASA_DB", "dbname=casa_inteligente")
@@ -33,19 +42,22 @@ DIAS_SESION = 30
 GUARDAR_LUZ_CADA_S = 60    # la luz llega cada segundo; no llenar la tabla eventos
 AVISO_DESCONEXION_S = 10   # si el puente no vuelve en este tiempo, se avisa al dueño
 
+# ---------- configuración y repositorios ----------
+# GRASP Indirección: todo acceso a una tabla pasa por un RepositorioPostgres; los controladores no arman SQL de tablas.
+
 conn = psycopg.connect(DSN, autocommit=True, row_factory=dict_row)
 usuarios, casas, habitaciones, dispositivos, reglas, horarios, eventos, notificaciones, solicitudes = (
     RepositorioPostgres(conn, t) for t in (
         "usuarios", "casas", "habitaciones", "dispositivos", "reglas", "horarios", "eventos", "notificaciones", "solicitudes"))
 
-SENSORES = {"sensor_movimiento", "sensor_luz"}
-ACCIONES = {"led": {"encender", "apagar"}, "cortina": {"abrir", "cerrar", "posicion"}}
-CANAL_TIPO = {"mov": "sensor_movimiento", "luz": "sensor_luz", "led": "led", "cortina": "cortina"}
+CANAL_TIPO = {"mov": "sensor_movimiento", "luz": "sensor_luz", "led": "led", "led2": "led", "cortina": "cortina"}  # led2: segundo LED (pin 10), mismas reglas que el primero
 # Catálogo de lo que se puede pedir. Los 4 primeros los maneja el Arduino; el resto se instala y queda «sin conectar».
 CATALOGO = {"sensor_movimiento": "Sensor de movimiento", "sensor_luz": "Sensor de luz", "led": "Luz inteligente",
             "cortina": "Cortina motorizada", "sensor_temperatura": "Sensor de temperatura", "sensor_puerta": "Sensor de puerta",
             "enchufe": "Enchufe inteligente", "camara": "Cámara", "alarma": "Alarma"}
 
+
+# ---------- utilidades (consultas que cruzan varias tablas) ----------
 
 def iso(fila):
     return {k: (v.isoformat() if hasattr(v, "isoformat") else v) for k, v in fila.items()}
@@ -72,47 +84,9 @@ def puede(u, id_casa) -> bool:
     return bool(c) and (u["rol"] == "admin" or c["id_propietario"] == u["id"])
 
 
-# ---------- dominio: Regla = Condicion + Accion ----------
-
-class CondicionUmbral:
-    def __init__(self, idSensor, operador, valor):
-        self.idSensor, self.operador, self.valor = idSensor, operador, valor
-
-    def evaluar(self, idDisp, valor) -> bool:
-        if idDisp != self.idSensor:
-            return False
-        v = float(valor)
-        return {">=": v >= self.valor, "<=": v <= self.valor, "==": v == self.valor}[self.operador]
-
-
-class CondicionMovimiento(CondicionUmbral):
-    """Movimiento = sensor de movimiento con valor 1 (hay) o 0 (no hay)."""
-
-
-class AccionActuador:
-    def __init__(self, objetivo, comando):
-        self.objetivo, self.comando = objetivo, comando
-
-    async def ejecutar(self, casa):
-        await ctl.enviarAccion(self.objetivo, self.comando)
-
-
-class AccionNotificar:
-    def __init__(self, mensaje):
-        self.mensaje = mensaje
-
-    async def ejecutar(self, casa):
-        await servicioNotificaciones.enviarCasa(casa, self.mensaje)
-
-
-def regla_desde_fila(f):
-    cls = CondicionMovimiento if f["operador"] == "==" else CondicionUmbral
-    cond = cls(f["id_sensor"], f["operador"], f["valor"])
-    acc = AccionNotificar(f["mensaje"]) if f["comando"] == "notificar" else AccionActuador(f["id_actuador"], f["comando"])
-    return cond, acc
-
-
 # ---------- servicios ----------
+# GRASP Fabricación Pura + SOLID S: cada servicio tiene una sola razón para cambiar
+# (cómo se autentica / cómo se avisa), y los controladores solo los usan.
 
 def _hash(token):
     return hashlib.sha256(token.encode()).hexdigest()
@@ -121,12 +95,16 @@ def _hash(token):
 class ServicioAutenticacion:
     def iniciarSesion(self, correo, contrasena):
         u = next(iter(usuarios.listar(correo=correo.strip().lower())), None)
-        if not u or not bcrypt.checkpw(contrasena.encode(), u["contrasena_hash"].encode()):
+        if not u or not self._verificarContrasena(u, contrasena):
             return None
         token = secrets.token_urlsafe(24)
         conn.execute("INSERT INTO sesiones VALUES (%s, %s, now() + make_interval(days => %s))", [_hash(token), u["id"], DIAS_SESION])
         conn.execute("DELETE FROM sesiones WHERE expira < now()")
         return token, u
+
+    @staticmethod  # privado en el UML: nadie fuera del servicio sabe que se usa bcrypt
+    def _verificarContrasena(u, contrasena) -> bool:
+        return bcrypt.checkpw(contrasena.encode(), u["contrasena_hash"].encode())
 
     def registrar(self, nombre, correo, contrasena):
         correo = correo.strip().lower()
@@ -158,8 +136,11 @@ class ServicioNotificaciones:
 
 
 # ---------- controladores ----------
+# GRASP Controlador: primera clase (después de la API/WebSocket) que recibe cada evento del sistema.
+# Están separados por caso de uso (Alta cohesión): automatización, hogar, administración y solicitudes.
 
 class ControladorAutomatizacion:
+    """Lecturas del puente → eventos y reglas; envío de acciones al puente correcto."""
     def __init__(self):
         self.puentes = {}          # websocket -> id de casa
         self.apps = {}             # websocket -> {"uid": usuario, "casa": casa que está mirando}
@@ -180,12 +161,13 @@ class ControladorAutomatizacion:
             float(valor)
         except ValueError:
             return  # lectura corrupta del serial: se descarta
-        if not d:
+        sensor = d and crearDispositivo(d)
+        if not isinstance(sensor, Sensor):  # solo un Sensor produce lecturas
             return
         dispositivos.guardar({"id": d["id"], "estado": valor})
         antes, hora = self.ultimoGuardado.get(d["id"], (None, 0))
         if valor != antes and (d["tipo"] != "sensor_luz" or time.time() - hora >= GUARDAR_LUZ_CADA_S):
-            eventos.guardar({"id_disp": d["id"], "valor": valor})
+            eventos.guardar(sensor.generarEvento(valor))  # GRASP Creador: el Sensor crea su Evento
             self.ultimoGuardado[d["id"]] = (valor, time.time())
         casa = casas.buscar(id_casa)
         if d["tipo"] == "sensor_movimiento" and valor == "1" and d["estado"] != "1" and casa["modo_ausente"]:
@@ -198,11 +180,13 @@ class ControladorAutomatizacion:
         # Solo actúa cuando la condición pasa de falsa a verdadera: así un botón manual
         # no se deshace con la siguiente lectura (la luz llega cada segundo).
         for f in reglas.listar(id_casa=casa["id"], id_sensor=idDisp, activa=True):
-            cond, acc = regla_desde_fila(f)
-            cumple = cond.evaluar(idDisp, valor)
-            if cumple and not self.cumplia.get(f["id"]):
-                await acc.ejecutar(casa)
-            self.cumplia[f["id"]] = cumple
+            # GRASP Polimorfismo: no se pregunta qué tipo de condición o acción tiene la regla.
+            # Bajo acoplamiento: la regla recibe con qué enviar/avisar, no conoce a este controlador.
+            r = Regla.desdeFila(f, self.enviarAccion, servicioNotificaciones.enviarCasa)
+            cumple = r.evaluar(idDisp, valor)
+            if cumple and not self.cumplia.get(r.id):
+                await r.ejecutar(casa)
+            self.cumplia[r.id] = cumple
 
     async def confirmar(self, id_casa, canal, valor):
         d = self.disp_por_canal(id_casa, canal)
@@ -225,20 +209,10 @@ class ControladorAutomatizacion:
             msg["valor"] = valor
         await self.difundir([w for w, c in self.puentes.items() if c == id_casa], msg)
 
-    def estado(self, u, id_casa):
-        if not puede(u, id_casa):
-            return {"tipo": "estado", "sinCasa": True}
-        ds = dispositivos_de(id_casa)
-        evs = conn.execute("SELECT * FROM eventos WHERE id_disp = ANY(%s) ORDER BY id DESC LIMIT 20",
-                           [[d["id"] for d in ds]]).fetchall()
-        casa = {k: v for k, v in casas.buscar(id_casa).items() if k not in ("token_puente", "plano")}
-        return {"tipo": "estado", "idCasa": id_casa, "puenteConectado": self.puenteConectado(id_casa),
-                "casa": casa, "dispositivos": ds, "eventos": [iso(e) for e in evs]}
-
     async def publicarEstado(self, id_casa):
         for w, a in list(self.apps.items()):
             if a["casa"] == id_casa:
-                await self.difundir([w], self.estado(usuarios.buscar(a["uid"]), id_casa))
+                await self.difundir([w], hogar.consultarEstado(usuarios.buscar(a["uid"]), id_casa))
 
     async def difundir(self, destinos, msg):
         for w in list(destinos):
@@ -271,26 +245,48 @@ class ControladorAutomatizacion:
 
 
 class ControladorHogar:
+    """Lo que hace el dueño desde la app: ver el estado y controlar sus dispositivos."""
+    def consultarEstado(self, u, id_casa):
+        if not puede(u, id_casa):
+            return {"tipo": "estado", "sinCasa": True}
+        ds = dispositivos_de(id_casa)
+        evs = conn.execute("SELECT * FROM eventos WHERE id_disp = ANY(%s) ORDER BY id DESC LIMIT 20",
+                           [[d["id"] for d in ds]]).fetchall()
+        casa = {k: v for k, v in casas.buscar(id_casa).items() if k not in ("token_puente", "plano")}
+        return {"tipo": "estado", "idCasa": id_casa, "puenteConectado": ctl.puenteConectado(id_casa),
+                "casa": casa, "dispositivos": ds, "eventos": [iso(e) for e in evs]}
+
     async def controlarDispositivo(self, u, idDisp, accion, valor=None):
         d = dispositivos.buscar(idDisp)
-        if not d or not puede(u, casa_de_disp(idDisp)) or accion not in ACCIONES.get(d["tipo"], ()):
+        if not d or not puede(u, casa_de_disp(idDisp)):
             return
-        if accion == "posicion":
-            valor = max(0, min(100, int(valor)))
-        await ctl.enviarAccion(idDisp, accion, valor, forzar=True)
+        # GRASP Experto: el Actuador decide si acepta la acción (y la Cortina limita su apertura a 0–100 %).
+        act = crearDispositivo(d)
+        pedido = act.ejecutarAccion(accion, valor) if isinstance(act, Actuador) else None
+        if pedido:
+            await ctl.enviarAccion(idDisp, *pedido, forzar=True)
 
     async def actualizarCasa(self, id_casa, cambios):
         casas.guardar({"id": id_casa, **cambios})
-        if cambios.get("estado_sistema") == "apagado":
-            for d in dispositivos_de(id_casa):
-                if d["tipo"] == "led":
-                    await ctl.enviarAccion(d["id"], "apagar", forzar=True)
+        if cambios.get("estado_sistema") == "apagado":  # encender/apagar es de ControladorAdministracion (UML)
+            await admin_.apagarSistema(id_casa)
         if cambios.get("estado_sistema") == "encendido":
-            ctl.cumplia.clear()  # las reglas vuelven a aplicar con la próxima lectura
+            admin_.encenderSistema(id_casa)
         await ctl.publicarEstado(id_casa)
 
 
 class ControladorAdministracion:
+    """Casas, dispositivos, encendido del sistema y atención de solicitudes."""
+    def encenderSistema(self, id_casa):
+        casas.guardar({"id": id_casa, "estado_sistema": "encendido"})
+        ctl.cumplia.clear()  # las reglas vuelven a aplicar con la próxima lectura
+
+    async def apagarSistema(self, id_casa):
+        casas.guardar({"id": id_casa, "estado_sistema": "apagado"})
+        for d in dispositivos_de(id_casa):
+            if d["tipo"] == "led":
+                await ctl.enviarAccion(d["id"], "apagar", forzar=True)
+
     def crearCasa(self, direccion, id_propietario, plano=None):
         c = casas.guardar({"direccion": direccion.strip(), "id_propietario": id_propietario,
                            "token_puente": secrets.token_urlsafe(18), "plano": Jsonb(plano) if plano else None})
@@ -317,17 +313,6 @@ class ControladorAdministracion:
                 raise HTTPException(409, f"Esta casa ya tiene un dispositivo en el canal «{canal}»")
         return dispositivos.guardar({"id_habitacion": id_habitacion, "nombre": nombre.strip(), "tipo": tipo, "canal": canal})
 
-
-class ControladorSolicitudes:
-    def crearSolicitud(self, u, tipo, descripcion, detalle=None):
-        return iso(solicitudes.guardar({"id_usuario": u["id"], "tipo": tipo, "descripcion": descripcion.strip(),
-                                        "detalle": Jsonb(detalle) if detalle else None}))
-
-    def listar(self, u):
-        filas = solicitudes.listar() if u["rol"] == "admin" else solicitudes.listar(id_usuario=u["id"])
-        nombres = {x["id"]: x["nombre"] for x in usuarios.listar()}
-        return [iso({**s, "usuario": nombres.get(s["id_usuario"])}) for s in reversed(filas)]
-
     async def atenderSolicitud(self, idSol, aprobar):
         s = solicitudes.buscar(idSol)
         if not s:
@@ -337,19 +322,61 @@ class ControladorSolicitudes:
         solicitudes.guardar({"id": idSol, "estado": "aprobada" if aprobar else "rechazada"})
         extra, d = "", s["detalle"] or {}
         if aprobar and s["tipo"] == "casa":
-            c = admin_.crearCasa(d.get("direccion") or s["descripcion"], s["id_usuario"], d or None)
+            c = self.crearCasa(d.get("direccion") or s["descripcion"], s["id_usuario"], d or None)
             extra = f": ya puedes ver «{c['direccion']}» en Inicio"
         if aprobar and s["tipo"] == "dispositivo":
             if d and casas.buscar(d["id_casa"]):
                 id_hab = d.get("id_habitacion")
                 if not id_hab or not habitaciones.buscar(id_hab):
                     id_hab = habitaciones.guardar({"id_casa": d["id_casa"], "nombre": d.get("nueva_habitacion") or "Nueva habitación"})["id"]
-                admin_.crearDispositivos(id_hab, d["dispositivos"])
+                self.crearDispositivos(id_hab, d["dispositivos"])
                 await ctl.publicarEstado(d["id_casa"])
             extra = ": el administrador los conectará pronto"
         await servicioNotificaciones.enviar(s["id_usuario"], f"Tu solicitud de {s['tipo']} fue {'aprobada' if aprobar else 'rechazada'}{extra}")
 
 
+class ControladorSolicitudes:
+    """Pedidos del cliente (casa nueva o dispositivos). Los atiende ControladorAdministracion."""
+    async def solicitarCasa(self, u, descripcion, detalle=None):
+        if detalle:
+            x = DetalleCasa(**detalle)
+            n = sum(p.cantidad for hb in x.habitaciones for p in hb.dispositivos)
+            descripcion = f"{x.direccion} · {x.ancho}×{x.largo} m · {plural(len(x.habitaciones), 'habitación', 'habitaciones')} · {plural(n, 'dispositivo')}"
+            detalle = x.model_dump()
+        return await self._crear(u, "casa", descripcion, detalle)
+
+    async def solicitarDispositivo(self, u, descripcion, detalle=None):
+        if detalle:
+            x = DetalleDisp(**detalle)
+            exigir(u, x.id_casa)
+            hab = habitaciones.buscar(x.id_habitacion) if x.id_habitacion else None
+            if x.id_habitacion and (not hab or hab["id_casa"] != x.id_casa):
+                raise HTTPException(422, "Esa habitación no es de la casa elegida")
+            if not hab and not (x.nueva_habitacion or "").strip():
+                raise HTTPException(422, "Elige una habitación o escribe el nombre de una nueva")
+            lugar = hab["nombre"] if hab else x.nueva_habitacion.strip()
+            descripcion = f"{plural(sum(p.cantidad for p in x.dispositivos), 'dispositivo')} para «{lugar}» en {casas.buscar(x.id_casa)['direccion']}"
+            detalle = x.model_dump()
+        return await self._crear(u, "dispositivo", descripcion, detalle)
+
+    async def _crear(self, u, tipo, descripcion, detalle):
+        descripcion = descripcion.strip()
+        if len(descripcion) < 3:
+            raise HTTPException(422, "Describe lo que necesitas")
+        s = iso(solicitudes.guardar({"id_usuario": u["id"], "tipo": tipo, "descripcion": descripcion[:300],
+                                     "detalle": Jsonb(detalle) if detalle else None}))
+        for a in usuarios.listar(rol="admin"):
+            if a["id"] != u["id"]:
+                await servicioNotificaciones.enviar(a["id"], f"Nueva solicitud de {tipo} de {u['nombre']}")
+        return s
+
+    def listar(self, u):
+        filas = solicitudes.listar() if u["rol"] == "admin" else solicitudes.listar(id_usuario=u["id"])
+        nombres = {x["id"]: x["nombre"] for x in usuarios.listar()}
+        return [iso({**s, "usuario": nombres.get(s["id_usuario"])}) for s in reversed(filas)]
+
+
+# Una sola instancia de cada servicio y controlador, creadas aquí y en ningún otro lugar.
 auth, servicioNotificaciones = ServicioAutenticacion(), ServicioNotificaciones()
 ctl, hogar, admin_, ctlSolicitudes = ControladorAutomatizacion(), ControladorHogar(), ControladorAdministracion(), ControladorSolicitudes()
 
@@ -385,10 +412,13 @@ async def vida(_):
 
 
 # ---------- API REST ----------
+# Capa delgada: valida la entrada (Pydantic), revisa permisos y delega en un controlador.
 
 app = FastAPI(title="Casa Inteligente", lifespan=vida)
 app.add_middleware(CORSMiddleware, allow_origins=ORIGENES, allow_methods=["*"], allow_headers=["*"])
 
+
+# --- autenticación y permisos ---
 
 def token_de(authorization: str = Header("")):
     return authorization.removeprefix("Bearer ").strip()
@@ -411,6 +441,8 @@ def exigir(u, id_casa):
     if not puede(u, id_casa):
         raise HTTPException(403, "No tienes acceso a esta casa")
 
+
+# --- modelos de entrada (datos que llegan por la API; no son clases del dominio) ---
 
 class Login(BaseModel):
     correo: str
@@ -485,7 +517,7 @@ def primer_error(e: ValidationError):
 
 class CambioDispositivo(BaseModel):
     nombre: str | None = Field(None, min_length=2, max_length=60)
-    canal: Literal["mov", "luz", "led", "cortina", ""] | None = None
+    canal: Literal["mov", "luz", "led", "led2", "cortina", ""] | None = None
 
 
 class Decision(BaseModel):
@@ -510,10 +542,10 @@ class NuevaHabitacion(BaseModel):
 class NuevoDispositivo(BaseModel):
     nombre: str = Field(min_length=2, max_length=60)
     tipo: Literal["sensor_movimiento", "sensor_luz", "led", "cortina", "sensor_temperatura", "sensor_puerta", "enchufe", "camara", "alarma"]
-    canal: Literal["mov", "luz", "led", "cortina"] | None = None
+    canal: Literal["mov", "luz", "led", "led2", "cortina"] | None = None
 
 
-class Regla(BaseModel):
+class DatosRegla(BaseModel):
     nombre: str = Field(min_length=2, max_length=80)
     id_sensor: int
     operador: Literal[">=", "<=", "=="]
@@ -524,7 +556,7 @@ class Regla(BaseModel):
     activa: bool = True
 
 
-class Horario(BaseModel):
+class DatosHorario(BaseModel):
     nombre: str = Field(min_length=2, max_length=80)
     hora: str = Field(pattern=r"^([01]\d|2[0-3]):[0-5]\d(:00)?$")
     dias: str = Field(pattern=r"^[1-7]{1,7}$")
@@ -533,27 +565,36 @@ class Horario(BaseModel):
     activo: bool = True
 
 
-def validar_regla(id_casa, r: Regla):
+# --- validaciones de reglas y horarios ---
+
+def acepta(fila, accion):
+    d = crearDispositivo(fila)
+    return isinstance(d, Actuador) and d.acepta(accion)
+
+
+def validar_regla(id_casa, r: DatosRegla):
     ds = {d["id"]: d for d in dispositivos_de(id_casa)}
     s = ds.get(r.id_sensor)
-    if not s or s["tipo"] not in SENSORES:
+    if not s or not isinstance(crearDispositivo(s), Sensor):
         raise HTTPException(422, "Elige un sensor de esta casa")
     if r.comando == "notificar":
         if not (r.mensaje or "").strip():
             raise HTTPException(422, "Escribe el mensaje de la notificación")
         return {**r.model_dump(), "id_actuador": None, "mensaje": r.mensaje.strip()}
     a = ds.get(r.id_actuador)
-    if not a or r.comando not in ACCIONES.get(a["tipo"], ()):
+    if not a or not acepta(a, r.comando):
         raise HTTPException(422, "Elige un actuador de esta casa que acepte esa acción")
     return {**r.model_dump(), "mensaje": None}
 
 
-def validar_horario(id_casa, h: Horario):
+def validar_horario(id_casa, h: DatosHorario):
     a = next((d for d in dispositivos_de(id_casa) if d["id"] == h.id_actuador), None)
-    if not a or h.comando not in ACCIONES.get(a["tipo"], ()):
+    if not a or not acepta(a, h.comando):
         raise HTTPException(422, "Elige un actuador de esta casa que acepte esa acción")
     return {**h.model_dump(), "dias": "".join(sorted(set(h.dias))), "ultima": None}
 
+
+# --- endpoints ---
 
 @app.get("/api/salud")
 def salud():
@@ -671,7 +712,7 @@ def ver_reglas(id_casa: int, u=Depends(usuario_actual)):
 
 
 @app.post("/api/casas/{id_casa}/reglas", status_code=201)
-def nueva_regla(id_casa: int, r: Regla, u=Depends(usuario_actual)):
+def nueva_regla(id_casa: int, r: DatosRegla, u=Depends(usuario_actual)):
     exigir(u, id_casa)
     return reglas.guardar({"id_casa": id_casa, **validar_regla(id_casa, r)})
 
@@ -687,7 +728,7 @@ def regla_propia(idRegla, u):
 @app.patch("/api/reglas/{idRegla}")
 def cambiar_regla(idRegla: int, cambios: dict, u=Depends(usuario_actual)):
     r = regla_propia(idRegla, u)
-    nueva = Regla(**{**r, **{k: v for k, v in cambios.items() if k in Regla.model_fields}})
+    nueva = DatosRegla(**{**r, **{k: v for k, v in cambios.items() if k in DatosRegla.model_fields}})
     ctl.cumplia.pop(idRegla, None)
     return reglas.guardar({"id": idRegla, **validar_regla(r["id_casa"], nueva)})
 
@@ -707,7 +748,7 @@ def ver_horarios(id_casa: int, u=Depends(usuario_actual)):
 
 
 @app.post("/api/casas/{id_casa}/horarios", status_code=201)
-def nuevo_horario(id_casa: int, h: Horario, u=Depends(usuario_actual)):
+def nuevo_horario(id_casa: int, h: DatosHorario, u=Depends(usuario_actual)):
     exigir(u, id_casa)
     return iso(horarios.guardar({"id_casa": id_casa, **validar_horario(id_casa, h)}))
 
@@ -724,7 +765,7 @@ def horario_propio(idH, u):
 def cambiar_horario(idH: int, cambios: dict, u=Depends(usuario_actual)):
     h = horario_propio(idH, u)
     actual = {**iso(h), "hora": h["hora"].strftime("%H:%M")}
-    nuevo = Horario(**{**actual, **{k: v for k, v in cambios.items() if k in Horario.model_fields}})
+    nuevo = DatosHorario(**{**actual, **{k: v for k, v in cambios.items() if k in DatosHorario.model_fields}})
     return iso(horarios.guardar({"id": idH, **validar_horario(h["id_casa"], nuevo)}))
 
 
@@ -777,38 +818,16 @@ def ver_solicitudes(u=Depends(usuario_actual)):
 
 @app.post("/api/solicitudes", status_code=201)
 async def nueva_solicitud(d: NuevaSolicitud, u=Depends(usuario_actual)):
-    detalle, desc = None, d.descripcion.strip()
+    pedir = ctlSolicitudes.solicitarCasa if d.tipo == "casa" else ctlSolicitudes.solicitarDispositivo
     try:
-        if d.tipo == "casa" and d.detalle:
-            x = DetalleCasa(**d.detalle)
-            n = sum(p.cantidad for hb in x.habitaciones for p in hb.dispositivos)
-            desc = f"{x.direccion} · {x.ancho}×{x.largo} m · {plural(len(x.habitaciones), 'habitación', 'habitaciones')} · {plural(n, 'dispositivo')}"
-            detalle = x.model_dump()
-        elif d.tipo == "dispositivo" and d.detalle:
-            x = DetalleDisp(**d.detalle)
-            exigir(u, x.id_casa)
-            hab = habitaciones.buscar(x.id_habitacion) if x.id_habitacion else None
-            if x.id_habitacion and (not hab or hab["id_casa"] != x.id_casa):
-                raise HTTPException(422, "Esa habitación no es de la casa elegida")
-            if not hab and not (x.nueva_habitacion or "").strip():
-                raise HTTPException(422, "Elige una habitación o escribe el nombre de una nueva")
-            lugar = hab["nombre"] if hab else x.nueva_habitacion.strip()
-            desc = f"{plural(sum(p.cantidad for p in x.dispositivos), 'dispositivo')} para «{lugar}» en {casas.buscar(x.id_casa)['direccion']}"
-            detalle = x.model_dump()
+        return await pedir(u, d.descripcion, d.detalle)
     except ValidationError as e:
         raise HTTPException(422, primer_error(e))
-    if len(desc) < 3:
-        raise HTTPException(422, "Describe lo que necesitas")
-    s = ctlSolicitudes.crearSolicitud(u, d.tipo, desc[:300], detalle)
-    for a in usuarios.listar(rol="admin"):
-        if a["id"] != u["id"]:
-            await servicioNotificaciones.enviar(a["id"], f"Nueva solicitud de {d.tipo} de {u['nombre']}")
-    return s
 
 
 @app.post("/api/solicitudes/{idSol}", status_code=204)
 async def atender(idSol: int, d: Decision, _=Depends(admin)):
-    await ctlSolicitudes.atenderSolicitud(idSol, d.aprobar)
+    await admin_.atenderSolicitud(idSol, d.aprobar)
 
 
 @app.get("/api/admin/usuarios")
@@ -817,6 +836,7 @@ def ver_usuarios(_=Depends(admin)):
 
 
 # ---------- WebSocket: puentes de las casas y apps en vivo ----------
+# Solo traduce mensajes a llamadas de los controladores (GRASP Controlador).
 
 @app.websocket("/ws")
 async def ws(w: WebSocket):
@@ -844,7 +864,7 @@ async def ws(w: WebSocket):
                 u = usuarios.buscar(ctl.apps[w]["uid"])
                 id_casa = int(m["idCasa"])
                 ctl.apps[w]["casa"] = id_casa if puede(u, id_casa) else None
-                await w.send_json(ctl.estado(u, id_casa))
+                await w.send_json(hogar.consultarEstado(u, id_casa))
             elif w in ctl.apps and t == "control":
                 await hogar.controlarDispositivo(usuarios.buscar(ctl.apps[w]["uid"]), int(m["idDisp"]), m["accion"], m.get("valor"))
     except (WebSocketDisconnect, KeyError, ValueError, TypeError):
@@ -854,3 +874,10 @@ async def ws(w: WebSocket):
         ctl.apps.pop(w, None)
         if id_casa:
             await ctl.puenteDesconectado(id_casa)
+
+
+# ---------- app del usuario (archivos estáticos) ----------
+# Va al final: las rutas /api y /ws se resuelven antes. Si no existe la carpeta (solo API), no se monta.
+APP_DIR = os.environ.get("CASA_APP") or str(Path(__file__).resolve().parent.parent / "app")
+if os.path.isdir(APP_DIR):
+    app.mount("/", StaticFiles(directory=APP_DIR, html=True), name="app")
