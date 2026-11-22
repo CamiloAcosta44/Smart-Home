@@ -31,7 +31,8 @@ const ICONO_DISP = { sensor_movimiento: 'persona', sensor_luz: 'sol', led: 'foco
 const COLOR_DISP = { sensor_movimiento: 'var(--acento)', sensor_luz: 'var(--ambar)', led: 'var(--ambar)', cortina: 'var(--azul)' };
 const TIPOS = { sensor_movimiento: 'Sensor de movimiento', sensor_luz: 'Sensor de luz', led: 'Luz (LED)', cortina: 'Cortina',
   sensor_temperatura: 'Sensor de temperatura', sensor_puerta: 'Sensor de puerta', enchufe: 'Enchufe inteligente', camara: 'Cámara', alarma: 'Alarma' };
-const CANAL_DE = { sensor_movimiento: 'mov', sensor_luz: 'luz', led: 'led', cortina: 'cortina' }; // los que maneja el Arduino
+const CANALES_DE = { sensor_movimiento: ['mov'], sensor_luz: ['luz'], led: ['led', 'led2'], cortina: ['cortina'] }; // canales del Arduino por tipo
+const CANAL_DE = Object.fromEntries(Object.entries(CANALES_DE).map(([t, c]) => [t, c[0]])); // los que maneja el Arduino
 const COMANDOS = { led: [['encender', 'Encender'], ['apagar', 'Apagar']], cortina: [['abrir', 'Abrir'], ['cerrar', 'Cerrar']] };
 const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 const DIAS_LARGOS = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
@@ -91,7 +92,9 @@ function boton(texto, clase, accion, attrs = {}) {
 // ---------- servidor ----------
 
 const S = {
-  servidor: almacen.leer('servidor') || `${location.protocol === 'https:' ? 'https' : 'http'}://${location.hostname || 'localhost'}:8765`,
+  // Servida por el propio servidor (producción) -> mismo origen; abierta desde otro puerto (desarrollo) -> :8765.
+  servidor: almacen.leer('servidor') || (location.port && location.port !== '8765' && !/^(80|443)$/.test(location.port)
+    ? `${location.protocol === 'https:' ? 'https' : 'http'}://${location.hostname || 'localhost'}:8765` : location.origin),
   token: almacen.leer('token'),
   usuario: JSON.parse(almacen.leer('usuario') || 'null'),
   casas: [], casa: Number(almacen.leer('casa')) || null,
@@ -806,7 +809,7 @@ function tarjetaCasaAdmin(c, habs, recargar) {
         CANAL_DE[d.tipo] ? h('select', { class: 'canal-sel', 'aria-label': `Conexión de ${d.nombre}`, onchange: async ev => {
           try { await api(`/api/dispositivos/${d.id}`, { metodo: 'PATCH', datos: { canal: ev.target.value } }); toast(ev.target.value ? 'Conectado al Arduino' : 'Desconectado'); d.canal = ev.target.value || null; }
           catch (x) { ev.target.value = d.canal || ''; toast(x.message, true); }
-        } }, h('option', { value: '' }, 'Sin conectar'), h('option', { value: CANAL_DE[d.tipo], selected: d.canal === CANAL_DE[d.tipo] }, `Arduino (canal ${CANAL_DE[d.tipo]})`))
+        } }, h('option', { value: '' }, 'Sin conectar'), ...CANALES_DE[d.tipo].map(c => h('option', { value: c, selected: d.canal === c }, `Arduino (canal ${c})`)))
           : h('p', { class: 'mut peq' }, 'No lo maneja el Arduino')),
       boton(ico('basura'), 'icono peligro', async () => {
         if (!confirmar(`¿Borrar «${d.nombre}»? También se borran sus reglas y su historial.`)) return;
@@ -826,7 +829,7 @@ function tarjetaCasaAdmin(c, habs, recargar) {
   const errD = h('p', { class: 'error', role: 'alert' });
   const tipo = h('select', { name: 'tipo' }, Object.entries(TIPOS).map(([v, t]) => h('option', { value: v }, t)));
   const canal = h('select', { name: 'canal' });
-  const llenarCanal = () => canal.replaceChildren(...(CANAL_DE[tipo.value] ? [h('option', { value: CANAL_DE[tipo.value] }, `Conectado al Arduino (${CANAL_DE[tipo.value]})`)] : []), h('option', { value: '' }, 'Aún sin conectar'));
+  const llenarCanal = () => canal.replaceChildren(...(CANALES_DE[tipo.value] || []).map(c => h('option', { value: c }, `Conectado al Arduino (${c})`)), h('option', { value: '' }, 'Aún sin conectar'));
   tipo.onchange = llenarCanal; llenarCanal();
   const formDisp = h('form', { novalidate: true, onsubmit: async ev => {
     ev.preventDefault();
