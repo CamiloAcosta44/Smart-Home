@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F172A">
+<meta name="description" content="Controla y mira tu casa inteligente.">
+<title>Casa Inteligente</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icono.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icono-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <!-- Acceso -->
+  <main id="acceso" class="acceso" hidden>
+    <div class="acceso-caja">
+      <div class="marca"><span class="ico" data-ico="casa"></span><span>Casa Inteligente</span></div>
+      <div class="pestanas" role="tablist">
+        <button role="tab" id="tab-entrar" aria-selected="true">Iniciar sesión</button>
+        <button role="tab" id="tab-crear" aria-selected="false">Crear cuenta</button>
+      </div>
+      <form id="form-acceso" novalidate>
+        <label class="campo" id="campo-nombre" hidden>Nombre
+          <input name="nombre" autocomplete="name" minlength="2" maxlength="60">
+        </label>
+        <label class="campo">Correo
+          <input name="correo" type="email" autocomplete="username" required>
+        </label>
+        <label class="campo">Contraseña
+          <input name="contrasena" type="password" autocomplete="current-password" required minlength="8">
+          <small id="ayuda-clave" class="ayuda" hidden>Mínimo 8 caracteres.</small>
+        </label>
+        <p id="error-acceso" class="error" role="alert"></p>
+        <button class="btn primario ancho" type="submit" id="btn-acceso">Iniciar sesión</button>
+        <details class="servidor">
+          <summary>Servidor</summary>
+          <label class="campo">Dirección del servidor
+            <input name="servidor" id="servidor" inputmode="url" placeholder="http://192.168.1.10:8765">
+            <small class="ayuda">El PC donde corre el servidor. Fuera de casa, su dirección de ZeroTier.</small>
+          </label>
+        </details>
+      </form>
+    </div>
+  </main>
+
+  <!-- App -->
+  <div id="app" class="app" hidden>
+    <nav class="nav" aria-label="Secciones">
+      <div class="marca nav-marca"><span class="ico" data-ico="casa"></span><span>Casa Inteligente</span></div>
+      <a href="#inicio" data-vista="inicio"><span class="ico" data-ico="casa"></span><span>Inicio</span></a>
+      <a href="#automatizar" data-vista="automatizar"><span class="ico" data-ico="ajustes"></span><span>Automatizar</span></a>
+      <a href="#historial" data-vista="historial"><span class="ico" data-ico="grafica"></span><span>Historial</span></a>
+      <a href="#solicitudes" data-vista="solicitudes"><span class="ico" data-ico="archivo"></span><span>Solicitudes</span></a>
+      <a href="#actividad" data-vista="actividad" class="solo-escritorio"><span class="ico" data-ico="campana"></span><span>Actividad</span><span class="punto punto-notif" hidden></span></a>
+      <a href="#cuenta" data-vista="cuenta"><span class="ico" data-ico="persona-c"></span><span>Cuenta</span></a>
+      <a href="#admin" data-vista="admin" id="nav-admin" class="solo-escritorio" hidden><span class="ico" data-ico="escudo"></span><span>Admin</span></a>
+      <button class="nav-salir solo-escritorio" id="salir"><span class="ico" data-ico="salir"></span><span>Salir</span></button>
+    </nav>
+    <a href="#actividad" class="campana-movil" aria-label="Actividad y notificaciones"><span class="ico" data-ico="campana"></span><span class="punto punto-notif" hidden></span></a>
+    <div class="contenido">
+      <div id="aviso-conexion" class="aviso" role="status" hidden>Sin conexión con el servidor. Reintentando…</div>
+      <main id="vista"></main>
+    </div>
+  </div>
+
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <script src="app.js"></script>
+  <script src="solicitud.js"></script>
+</body>
+</html>
