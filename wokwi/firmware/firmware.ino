@@ -16,6 +16,9 @@ const uint8_t PIN_SERVO = 9;   // Servomotor de la Cortina
 // ponytail: calibrar GAMMA/RL10 con el LDR real del montaje fisico.
 const float GAMMA = 0.7, RL10 = 50;
 
+// Cortina automatica: por encima de LUX_UMBRAL se abre, por debajo se cierra.
+const float LUX_UMBRAL = 300;
+
 const unsigned long PERIODO_LUZ_MS = 1000;
 unsigned long ultimaLuz = 0;
 int ultimoMov = -1;
@@ -80,7 +83,11 @@ void loop() {
   }
   if (millis() - ultimaLuz >= PERIODO_LUZ_MS) {
     ultimaLuz = millis();
-    Serial.print(F("EVT luz ")); Serial.println((long)leerLux());
+    float lux = leerLux();
+    Serial.print(F("EVT luz ")); Serial.println((long)lux);
+    static int auto_ = -1;  // ultima accion automatica: 0 cerrada, 100 abierta
+    int destino = lux > LUX_UMBRAL ? 100 : 0;
+    if (destino != auto_) { auto_ = destino; cortina(destino); }
   }
   while (Serial.available()) {
     char c = Serial.read();
