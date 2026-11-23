@@ -1,0 +1,23 @@
+# Demo automática: cambia los sensores del Arduino simulado mientras corre el puente.
+name: Demo Casa Inteligente
+version: 1
+author: TA Casa Inteligente
+steps:
+  - wait-serial: "LISTO"
+  # La "LDR" es un potenciómetro: posición baja = poca resistencia = mucha luz
+  - set-control: { part-id: ldr, name: position, value: 0.45 }   # ~130 lux, luz de interior
+  - delay: 2000ms
+  # 1) Alguien entra a la sala -> el backend enciende las luces
+  - set-control: { part-id: btnmov, name: pressed, value: 1 }
+  - delay: 3000ms
+  - expect-pin: { part-id: mega, name: "7", value: 1 }   # LED encendido
+  # 2) Sale el sol (~2300 lux) -> el backend cierra la cortina
+  - set-control: { part-id: ldr, name: position, value: 0.1 }
+  - delay: 3000ms
+  # 3) La persona se va -> se apagan las luces
+  - set-control: { part-id: btnmov, name: pressed, value: 0 }
+  - delay: 3000ms
+  - expect-pin: { part-id: mega, name: "7", value: 0 }   # LED apagado
+  # 4) Anochece (~14 lux) -> se abre la cortina
+  - set-control: { part-id: ldr, name: position, value: 0.8 }
+  - delay: 3000ms
