@@ -1,0 +1,22 @@
+# Producción en una VPS:  cp .env.example .env  (editar)  &&  docker compose up -d --build
+services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment: { POSTGRES_DB: casa, POSTGRES_USER: casa, POSTGRES_PASSWORD: "${DB_PASS}" }
+    volumes: [datos:/var/lib/postgresql/data]
+  servidor:
+    build: .
+    restart: always
+    depends_on: [db]
+    environment:
+      CASA_DB: "host=db dbname=casa user=casa password=${DB_PASS}"
+      CASA_ORIGENES: "https://${DOMINIO}"
+  caddy:                      # HTTPS automático (certificado gratis) y proxy hacia el servidor
+    image: caddy:2-alpine
+    restart: always
+    ports: ["80:80", "443:443"]
+    environment: { DOMINIO: "${DOMINIO}" }
+    volumes: [./Caddyfile:/etc/caddy/Caddyfile, caddy:/data]
+    depends_on: [servidor]
+volumes: { datos: {}, caddy: {} }

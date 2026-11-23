@@ -1,0 +1,18 @@
+# Servicio del PC que tiene el Arduino. Instalar:
+#   sudo cp puente.service /etc/systemd/system/ && sudo systemctl enable --now puente
+# Editar USUARIO, la ruta y la URL del servidor. La clave del puente se ve en la app (Admin > Casas).
+[Unit]
+Description=Puente Arduino - Casa Inteligente
+After=network-online.target
+
+[Service]
+User=USUARIO
+WorkingDirectory=/home/USUARIO/ProyectoTA/wokwi
+Environment=CASA_SERVIDOR=wss://casa.tudominio.com/ws
+Environment=CASA_TOKEN_PUENTE=CLAVE_DEL_PUENTE
+ExecStart=/home/USUARIO/ProyectoTA/wokwi/.venv/bin/python pc/puente.py --puerto /dev/ttyACM0
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

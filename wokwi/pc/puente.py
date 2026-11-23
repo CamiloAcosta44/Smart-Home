@@ -7,7 +7,7 @@ reinicia, el puente se vuelve a conectar solo.
   Arduino real:      python puente.py --puerto /dev/ttyACM0
   Simulado (Wokwi):  python puente.py --sim [--escenario demo.yaml] [--minutos 5]
 
-Opciones: --servidor ws://host:8765/ws (por defecto ws://localhost:8765/ws)
+Opciones: --servidor ws://host:8765/ws (o variable CASA_SERVIDOR; por defecto ws://localhost:8765/ws)
           --token CLAVE  clave del puente de la casa (o variable CASA_TOKEN_PUENTE,
                          o el archivo token_puente.txt junto a este programa).
 """
@@ -22,14 +22,14 @@ import websockets
 
 AQUI = Path(__file__).resolve().parent
 PROYECTO = AQUI.parent
-CANALES = {"mov", "luz", "led", "cortina"}
+CANALES = {"mov", "luz", "led", "led2", "cortina"}
 
 
 def accion_a_serial(m):
     """{'canal': 'led', 'accion': 'encender'} -> 'CMD led 1'; acción desconocida -> None."""
     c, a = m.get("canal"), m.get("accion")
-    if c == "led" and a in ("encender", "apagar"):
-        return f"CMD led {1 if a == 'encender' else 0}"
+    if c in ("led", "led2") and a in ("encender", "apagar"):
+        return f"CMD {c} {1 if a == 'encender' else 0}"
     if c == "cortina" and a in ("abrir", "cerrar"):
         return f"CMD cortina {100 if a == 'abrir' else 0}"
     if c == "cortina" and a == "posicion":
@@ -100,7 +100,7 @@ async def main():
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--sim", action="store_true", help="usar el Arduino simulado en Wokwi")
     g.add_argument("--puerto", help="puerto serie del Arduino real, p. ej. /dev/ttyACM0")
-    ap.add_argument("--servidor", default="ws://localhost:8765/ws")
+    ap.add_argument("--servidor", default=os.environ.get("CASA_SERVIDOR", "ws://localhost:8765/ws"))
     ap.add_argument("--token", help="clave del puente de la casa")
     ap.add_argument("--escenario", help="YAML de Wokwi que mueve los sensores (solo --sim)")
     ap.add_argument("--minutos", type=int, default=5, help="duración máxima de la simulación (gasta cupo Wokwi CI)")
@@ -148,7 +148,12 @@ async def main():
                                 print("ARDUINO <", cmd, flush=True)
                                 await puerto.escribir(cmd)
 
-                    await asyncio.gather(subir(), bajar())
+                    async def latido():  # le dice al Arduino que el servidor sigue conectado
+                        while True:
+                            await puerto.escribir("HB")
+                            await asyncio.sleep(5)
+
+                    await asyncio.gather(subir(), bajar(), latido())
             except websockets.ConnectionClosed as e:
                 if e.rcvd and e.rcvd.code == 4401:
                     sys.exit("El servidor rechazó la clave del puente")

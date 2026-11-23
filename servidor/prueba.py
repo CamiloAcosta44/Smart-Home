@@ -53,7 +53,7 @@ async def main():
         await recibir(app, "listo")
         await app.send(json.dumps({"tipo": "seleccionar", "idCasa": cid}))
         est = await recibir(app, "estado")
-        assert len(est["dispositivos"]) == 4 and not est["puenteConectado"] and "token_puente" not in est["casa"]
+        assert len(est["dispositivos"]) == 5 and not est["puenteConectado"] and "token_puente" not in est["casa"]
 
         async with websockets.connect(W) as malo:  # puente con clave falsa
             await malo.send(json.dumps({"tipo": "hola", "rol": "puente", "token": "falsa"}))
@@ -69,6 +69,7 @@ async def main():
         # reglas por flanco: movimiento -> LED y aviso
         await pu.send(json.dumps({"tipo": "lectura", "canal": "mov", "valor": "1"}))
         assert await recibir(pu, "accion") == {"tipo": "accion", "canal": "led", "accion": "encender"}
+        assert await recibir(pu, "accion") == {"tipo": "accion", "canal": "led2", "accion": "encender"}  # LED 2: mismas reglas
         assert "Movimiento" in (await recibir(app, "notificacion"))["mensaje"]
         await pu.send(json.dumps({"tipo": "lectura", "canal": "luz", "valor": "2300"}))
         assert (await recibir(pu, "accion"))["accion"] == "cerrar"
@@ -87,7 +88,8 @@ async def main():
 
         # sistema apagado: no hay reglas; modo ausente: alerta
         assert api(f"/api/casas/{cid}", {"estado_sistema": "apagado", "modo_ausente": True}, adm, "PATCH")["modo_ausente"]
-        assert (await recibir(pu, "accion"))["accion"] == "apagar"
+        assert (await recibir(pu, "accion"))["accion"] == "apagar"  # LED
+        assert (await recibir(pu, "accion"))["accion"] == "apagar"  # LED 2
         await pu.send(json.dumps({"tipo": "lectura", "canal": "mov", "valor": "0"}))
         await pu.send(json.dumps({"tipo": "lectura", "canal": "mov", "valor": "1"}))
         assert "modo ausente" in (await recibir(app, "notificacion"))["mensaje"]
