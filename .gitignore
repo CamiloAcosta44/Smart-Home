@@ -1,0 +1,5 @@
+.venv/
+__pycache__/
+wokwi/pc/token_puente.txt
+wokwi/firmware/build/
+graphify-out/

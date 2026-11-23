@@ -1,0 +1,405 @@
+{
+  "version": 1,
+  "author": "Casa Inteligente - TA",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-breadboard-half",
+      "id": "bb1",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-arduino-mega",
+      "id": "mega",
+      "top": 260,
+      "left": 20,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led",
+      "top": 76.2,
+      "left": 126.2,
+      "attrs": {
+        "color": "yellow"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 131.75,
+      "left": 150.8,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r10k",
+      "top": 36.3,
+      "left": 274.2,
+      "rotate": 90,
+      "attrs": {
+        "value": "10000"
+      }
+    },
+    {
+      "type": "wokwi-pir-motion-sensor",
+      "id": "pir",
+      "top": -150,
+      "left": 210.48,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-servo",
+      "id": "servo",
+      "top": -300,
+      "left": 190,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "ldr",
+      "top": -70,
+      "left": 330,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-pushbutton-6mm",
+      "id": "btnmov",
+      "top": 125.6,
+      "left": 340,
+      "attrs": {
+        "color": "blue",
+        "label": "Simular movimiento (solo Wokwi)"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": 76.2,
+      "left": 11.0,
+      "attrs": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r2",
+      "top": 131.75,
+      "left": 35.6,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r10k2",
+      "top": 36.3,
+      "left": 34.2,
+      "rotate": 90,
+      "attrs": {
+        "value": "10000"
+      }
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "ldr2",
+      "top": -70,
+      "left": 40,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-servo",
+      "id": "servo2",
+      "top": -300,
+      "left": -120,
+      "attrs": {}
+    }
+  ],
+  "connections": [
+    [
+      "mega:0",
+      "$serialMonitor:TX",
+      "",
+      []
+    ],
+    [
+      "mega:1",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "mega:5V",
+      "bb1:tp.1",
+      "red",
+      [
+        "v22",
+        "h-209.5",
+        "v-447.2"
+      ]
+    ],
+    [
+      "mega:GND.1",
+      "bb1:bn.1",
+      "black",
+      [
+        "v-20",
+        "h-129",
+        "v-52.7"
+      ]
+    ],
+    [
+      "bb1:tn.1",
+      "bb1:bn.1",
+      "black",
+      [
+        "h-24",
+        "v174"
+      ]
+    ],
+    [
+      "pir:VCC",
+      "bb1:tp.20",
+      "red",
+      []
+    ],
+    [
+      "pir:GND",
+      "bb1:tn.21",
+      "black",
+      []
+    ],
+    [
+      "pir:OUT",
+      "bb1:25b.f",
+      "green",
+      []
+    ],
+    [
+      "mega:2",
+      "bb1:25b.j",
+      "green",
+      []
+    ],
+    [
+      "servo:GND",
+      "bb1:tn.12",
+      "black",
+      [
+        "h-31.2"
+      ]
+    ],
+    [
+      "servo:V+",
+      "bb1:tp.13",
+      "red",
+      [
+        "h-21.6"
+      ]
+    ],
+    [
+      "servo:PWM",
+      "bb1:17b.f",
+      "orange",
+      [
+        "h-10.4"
+      ]
+    ],
+    [
+      "mega:9",
+      "bb1:17b.j",
+      "orange",
+      []
+    ],
+    [
+      "mega:7",
+      "bb1:20b.j",
+      "yellow",
+      []
+    ],
+    [
+      "r1:2",
+      "bb1:20b.h",
+      "",
+      []
+    ],
+    [
+      "r1:1",
+      "bb1:14b.h",
+      "",
+      []
+    ],
+    [
+      "led:A",
+      "bb1:14b.f",
+      "",
+      []
+    ],
+    [
+      "led:C",
+      "bb1:13b.f",
+      "",
+      []
+    ],
+    [
+      "bb1:13b.j",
+      "bb1:bn.10",
+      "black",
+      []
+    ],
+    [
+      "r10k:1",
+      "bb1:tp.25",
+      "",
+      []
+    ],
+    [
+      "r10k:2",
+      "bb1:30t.c",
+      "",
+      []
+    ],
+    [
+      "ldr:SIG",
+      "bb1:30t.d",
+      "purple",
+      [
+        "v81.3"
+      ]
+    ],
+    [
+      "ldr:GND",
+      "bb1:tn.24",
+      "black",
+      [
+        "v-20",
+        "h-65.8"
+      ]
+    ],
+    [
+      "mega:A0",
+      "bb1:30t.e",
+      "purple",
+      [
+        "v22",
+        "h151.5",
+        "v-370.1"
+      ]
+    ],
+    [
+      "btnmov:1.l",
+      "bb1:24b.g",
+      "blue",
+      []
+    ],
+    [
+      "mega:3",
+      "bb1:24b.j",
+      "blue",
+      []
+    ],
+    [
+      "btnmov:2.l",
+      "bb1:bn.25",
+      "black",
+      [
+        "v49.7"
+      ]
+    ],
+    [
+      "mega:8",
+      "bb1:8b.j",
+      "yellow",
+      []
+    ],
+    [
+      "r2:2",
+      "bb1:8b.h",
+      "",
+      []
+    ],
+    [
+      "r2:1",
+      "bb1:2b.h",
+      "",
+      []
+    ],
+    [
+      "led2:A",
+      "bb1:2b.f",
+      "",
+      []
+    ],
+    [
+      "led2:C",
+      "bb1:1b.f",
+      "",
+      []
+    ],
+    [
+      "bb1:1b.j",
+      "bb1:bn.2",
+      "black",
+      []
+    ],
+    [
+      "r10k2:1",
+      "bb1:tp.4",
+      "",
+      []
+    ],
+    [
+      "r10k2:2",
+      "bb1:5t.c",
+      "",
+      []
+    ],
+    [
+      "ldr2:SIG",
+      "bb1:5t.d",
+      "purple",
+      []
+    ],
+    [
+      "ldr2:GND",
+      "bb1:tn.3",
+      "black",
+      []
+    ],
+    [
+      "mega:A1",
+      "bb1:5t.e",
+      "purple",
+      []
+    ],
+    [
+      "servo2:GND",
+      "bb1:tn.7",
+      "black",
+      []
+    ],
+    [
+      "servo2:V+",
+      "bb1:tp.6",
+      "red",
+      []
+    ],
+    [
+      "servo2:PWM",
+      "bb1:10b.f",
+      "orange",
+      []
+    ],
+    [
+      "mega:10",
+      "bb1:10b.j",
+      "orange",
+      []
+    ]
+  ],
+  "dependencies": {}
+}
