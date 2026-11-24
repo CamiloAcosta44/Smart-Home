@@ -26,3 +26,5 @@ Arduino ─USB─ PC: puente.py → servidor v3 + Postgres + app ─ túnel HTTP
    - Cambios: editar y `git pull`; el servidor se recarga con `--reload`. Para la app, subir la versión del caché en `sw.js`.
    - Copia semanal: `pg_dump casa_inteligente > copia.sql` (cron).
    - Plan B sin depender del PC: VM Always Free de Oracle con `docker-compose.yml` (ver `DESPLIEGUE.md`).
+
+Guía paso a paso de esta opción: `DESPLIEGUE_LOCAL.md` (servicios `despliegue/casa-servidor.service` y `despliegue/puente.service`).

@@ -1,5 +1,7 @@
 # Despliegue
 
+> Para correr el servidor en el PC del Arduino con túnel, ver `DESPLIEGUE_LOCAL.md`. Esta guía es el plan B con VPS y Docker.
+
 ```
 Arduino ─USB─ PC (puente.py) ─wss─► VPS: Caddy(HTTPS) → servidor FastAPI (+ app) → PostgreSQL ◄─https─ celular
 ```

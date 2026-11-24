@@ -1,16 +1,19 @@
-# Servicio del PC que tiene el Arduino. Instalar:
-#   sudo cp puente.service /etc/systemd/system/ && sudo systemctl enable --now puente
-# Editar USUARIO, la ruta y la URL del servidor. La clave del puente se ve en la app (Admin > Casas).
+# Puente Arduino <-> servidor. Corre en el mismo PC que el servidor y el Arduino.
+# Instalar (editar USUARIO, RUTA y CLAVE_DEL_PUENTE; la clave se ve en la app: Admin > Casas):
+#   sudo cp despliegue/puente.service /etc/systemd/system/ && sudo systemctl enable --now puente
+# El usuario debe estar en el grupo dialout:  sudo usermod -aG dialout USUARIO  (y reiniciar sesión)
 [Unit]
 Description=Puente Arduino - Casa Inteligente
-After=network-online.target
+After=network-online.target casa-servidor.service
+Wants=casa-servidor.service
 
 [Service]
 User=USUARIO
-WorkingDirectory=/home/USUARIO/ProyectoTA/wokwi
-Environment=CASA_SERVIDOR=wss://casa.tudominio.com/ws
+WorkingDirectory=/home/USUARIO/Smart-Home/wokwi
+Environment=CASA_SERVIDOR=ws://localhost:8765/ws
+# Si existe wokwi/pc/token_puente.txt (lo crea crear_bd.py) no hace falta esta línea
 Environment=CASA_TOKEN_PUENTE=CLAVE_DEL_PUENTE
-ExecStart=/home/USUARIO/ProyectoTA/wokwi/.venv/bin/python pc/puente.py --puerto /dev/ttyACM0
+ExecStart=/home/USUARIO/Smart-Home/wokwi/.venv/bin/python pc/puente.py --puerto /dev/ttyACM0
 Restart=always
 RestartSec=5
 

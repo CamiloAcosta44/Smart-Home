@@ -1,0 +1,19 @@
+# Servidor FastAPI + app (PWA). Instalar (editar USUARIO y CASA_ORIGENES):
+#   sudo cp despliegue/casa-servidor.service /etc/systemd/system/ && sudo systemctl enable --now casa-servidor
+# Requiere PostgreSQL con la base creada (servidor/crear_bd.py) y un venv en servidor/.venv.
+[Unit]
+Description=Servidor Casa Inteligente
+After=network-online.target postgresql.service
+
+[Service]
+User=USUARIO
+WorkingDirectory=/home/USUARIO/Smart-Home/servidor
+Environment=CASA_DB=dbname=casa_inteligente
+# URL pública del túnel (o * mientras pruebas)
+Environment=CASA_ORIGENES=https://TU-URL-DEL-TUNEL
+ExecStart=/home/USUARIO/Smart-Home/servidor/.venv/bin/uvicorn app:app --host 127.0.0.1 --port 8765
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
